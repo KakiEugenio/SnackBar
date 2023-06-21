@@ -26,7 +26,7 @@ public class SnackBar1 {
         String dataValidade = "";
         
         
-        /*System.out.println("---------Bem vindo ao S N A C K    B A R-------------");
+        System.out.println("--------- Bem vindo ao Snack Bar ------------");
         System.out.println("Nome: ");
         String nome = input.nextLine();
         System.out.println("Endereco: ");
@@ -36,7 +36,7 @@ public class SnackBar1 {
         System.out.println("Email: ");
         String email = input.nextLine();
         
-        Cliente p = new Cliente(nome,endereco,contacto,email);*/
+        Cliente p = new Cliente(nome,endereco,contacto,email);
 
         Prato prato;
         char resp;
