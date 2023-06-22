@@ -1,12 +1,17 @@
 package snackbar1;
+import Conexao.Conexao;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import static java.nio.file.Files.list;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.Scanner;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.Collections.list;
 
 /**
  *
@@ -15,15 +20,15 @@ import java.util.List;
 public class SnackBar1 {
 
     
-    public static void main(String[] args) {
-    
-     Scanner input = new Scanner(System.in);
-     
-      
-        String nomeCl = "Sem Nome";
+    public static void main(String[] args)  throws SQLException  {
 
-        List<String> dados = new ArrayList<>();
-        String dataValidade = "";
+        Conexao dao = new Conexao();
+        dao.connect();
+        List<Prato> list = new ArrayList<>();
+        double preco = 0;
+        double ValorTotal = 0;
+        
+        Scanner input = new Scanner(System.in);
         
         
         System.out.println("--------- Bem vindo ao Snack Bar ------------");
@@ -36,30 +41,32 @@ public class SnackBar1 {
         System.out.println("Email: ");
         String email = input.nextLine();
         
-        Cliente p = new Cliente(nome,endereco,contacto,email);
-
-        Prato prato;
+        Cliente cliente = new Cliente(nome,endereco,contacto,email)
+            
         char resp;
         
         do {
     
-        System.out.println(" Menu do Snack Bar ");
-        System.out.println("""
+            System.out.println(" Menu do Snack Bar ");
+            System.out.println("""
                            [1] - Pizza
                            [2] - Salgadinho
                            [3] - Lanche
                            """);
-        System.out.print("Faça a sua encomenda: ");
-        int menu = input.nextInt();
-        input.nextLine();
+            System.out.print("Faça a sua encomenda: ");
+            int menu = input.nextInt();
+            input.nextLine();
 
-        //PRIMEIRO MENU - PIZZA
+            String molho = null,cobertura = null;
+            String tiposal = null; String massa = null;
+            String recheio = null,  tipoSal  ;
+
+
+                        //Menu  Pizza
       
         switch (menu) {
             case 1 -> {
-                   
-                prato = new Pizza();
-
+                
                 System.out.println("Deseja uma cobertura recheada ? ");
                 System.out.print("Sim[s] / Não[n]:");
                 char respostaCobertura = input.next().charAt(0);
@@ -76,19 +83,20 @@ public class SnackBar1 {
 
                     switch (menuRecheio) {
                         case 1 -> {
-                            prato.setRecheio(" Atum");
+                            cobertura = " Atum ";
                         }
                         case 2 -> {
-                            prato.setRecheio("Baicon");
+                            cobertura = " Baicon ";
                         }
                         case 3 -> {
-                            prato.setRecheio("Chouriço");
+                            cobertura = " Chouriço ";
                         }
                         default -> {
-                            prato.setRecheio("Escolha Inválida");
+                            cobertura = " Escolha Inválida ";
                         }
                     }
                 } else {
+                    cobertura = " Sem Cobertura ";
                     System.out.println(" Você não escolheu o recheio ");
 
                 }
@@ -124,25 +132,25 @@ public class SnackBar1 {
 
                         switch (tipoMolho) {
                             case 1 -> {
-                                prato.setRecheio(" Mustarda ");
+                                molho=" Mustarda ";
                             }
                             case 2 -> {
-                                prato.setRecheio(" Maionese ");
+                                molho= " Maionese";
                             }
                             case 3 -> {
-                                prato.setRecheio(" Ketchup ");
+                                  molho=" Ketchup ";
                             }
                             case 4 -> {
-                                prato.setRecheio("Todos os Molhos");
+                                 molho= "Todos os Molhos";
                                 break;
                             }
                             default -> {
-                                prato.setRecheio("Escolha Inválida");
+                                 molho = " Escolha Inválida ";
 
                             }
 
                         }
-                        infor += prato.getRecheio();
+                        infor += molho;
                         System.out.println("Escolhas: " + infor);
                         System.out.println("Deseja continuar? ");
                         System.out.print(" Sim [s] / Não [n]");
@@ -151,6 +159,8 @@ public class SnackBar1 {
                     } while (resposta == 's');
 
                 } else {
+                    
+                    molho = " Todos Molhos ";
                     System.out.println("Você escolheu todos os molhos");
                     System.out.println("""
                                        Molhos escolhido
@@ -159,13 +169,16 @@ public class SnackBar1 {
                                        3- Ketchup                                     
                                        """);
                 }  
+
+                 Prato prato = new Pizza(cobertura, molho);  
+                 list.add(prato);
+                 preco = 1500;
                    
             }
             
-                        //SEGUNDO MENU - SALGADINHOS
+                        //Menu Salgadinho
             
-            case 2 -> {
-                prato = new Salgadinho();
+            case 2 -> 
                 
                  System.out.print("Deseja uma cobertura recheada? ");
                  System.out.println("Sim[s] / Não[n]:");
@@ -182,20 +195,22 @@ public class SnackBar1 {
                     int menuRecheio = input.nextInt();
 
                     switch (menuRecheio) {
-                        case 1 -> {
-                            prato.setRecheio(" Atum");
+                         case 1 -> {
+                            recheio = " Atum ";
                         }
                         case 2 -> {
-                            prato.setRecheio(" Baicon ");
+                             recheio = " Baicon ";
                         }
                         case 3 -> {
-                            prato.setRecheio(" Chouriço");
+                             recheio = " Chouriço";
                         }
                         default -> {
-                            prato.setRecheio(" Escolha Inválida");
+                             recheio = "  Escolha Inválida ";
                         }
                     }
                 } else {
+
+                    recheio = " Sem Recheio ";
                     System.out.println("Você não escolheu o recheio ");
 
                 }
@@ -207,21 +222,21 @@ public class SnackBar1 {
                 int tipoSalgadinho = input.nextInt();
 
                 switch (tipoSalgadinho) {
+
                     case 1 -> {
-                        prato.setTipoSal(" 1- Frito ");
+                        tipoSal = " 1- Frito ";
 
                     }
                     case 2 -> {
-                        prato.setTipoSal(" 2- Assado ");
+                        tipoSal = " 2- Assado ";
                     }               
                     default -> {
-                        prato.setRecheio("Escolha Invalida");
+                        tipoSal = "Escolha Invalida";
 
                     }
-
                 }
                 
-                     //Tipo de MASSA - Salgadinho
+                     //Tipo de Massa - Salgadinho
                 
                 System.out.println(" Digite o tipo de Massa que você deseja:  ");
                 System.out.println(" 1-Massa 1 ");
@@ -229,29 +244,34 @@ public class SnackBar1 {
                 System.out.println(" 3-Massa 3");
                 
                int  tipoMassa = input.nextInt();
+                
                 switch (tipoMassa) {
-                    case 1 -> {
-                        prato.setMassa(" 1- Massa 1");
+                        
+                   case 1 -> {
+                        massa = " 1- Massa 1 ";
 
                     }
                     case 2 -> {
-                        prato.setMassa(" 2- Massa 2");
+                       massa =" 2- Massa 2 ";
                     }
                     case 3 -> {
-                        prato.setMassa(" 3- Massa 3");
+                       massa = " 3- Massa 3 ";
                     }
                     default -> {
-                        prato.setRecheio("Escolha Inválida");
-
+                       massa = " Escolha Inválida ";
+ 
                     }
-
                 }
-
+              preco=1000;
+              Prato prato = new Salgadinho(tiposal,massa);
+              list.add(prato);
+                
             }
-            // MENU Lanche
+               
+                    // Menu Lanche
+            
             case 3 -> {
 
-                prato = new Lanche();
                 System.out.println(" Menu Lanche ");
                 System.out.println(" Selecione  o tipo de pão que você prefere ");
 
@@ -265,21 +285,22 @@ public class SnackBar1 {
                 int tipoPao = input.nextInt();
 
                 switch (tipoPao) {
-                    case 1 -> {
-                        prato.setRecheio(" Pao Cacete");
+                        
+                   case 1 -> {
+                    tipopao = " Pao Cacete";
                     }
                     case 2 -> {
-                        prato.setRecheio(" Pao Francês ");
+                        tipopao= " Pao Francês ";
                     }
                     case 3 -> {
-                        prato.setRecheio(" Pao Italiano");
+                       tipopao= " Pao Italiano";
                     }
                     default -> {
-                        prato.setRecheio("Escolha Inválida");
+                        tipopao= "Escolha Inválida";
 
                     }
-
                 }
+                
                 String infor = "";
                 char resposta;
                 do {
@@ -296,78 +317,80 @@ public class SnackBar1 {
                     int tipoMolho = input.nextInt();
 
                     switch (tipoMolho) {
+
                         case 1 -> {
-                            prato.setRecheio(" Mustarda ");
+                          tipomolho = " Mustarda ";
                         }
                         case 2 -> { 
-                            prato.setRecheio(" Maionese ");
+                            tipomolho= " Maionese ";
                         }
                         case 3 -> {
-                            prato.setRecheio(" Ketchup ");
+                             tipomolho= " Ketchup ";
                         }
                         case 4 -> {
-                            prato.setRecheio("Todos os Molhos");
+                             tipomolho= "Todos os Molhos";
                         }
                         default -> {
-                            prato.setRecheio("Escolha Inválida");
+                             tipomolho = "Escolha Inválida";
 
                         }
-
                     }
-                    infor += prato.getRecheio();
+                    
+                    infor += tipomolho;
                     System.out.println("Escolhas: " + infor);
                     System.out.println("Deseja continuar? ");
                     System.out.println(" Sim [s] / Não [n]");
                     resposta = input.next().charAt(0);
+                    
                 } while (resposta == 's');
- 
+                
                 System.out.println("");
-
+                Prato prato = new Lanche(tipopao,tipomolho);
+                 list.add(prato);
+                 preco=3000;
             }
 
         }
+            ValorTotal=+preco;
+            System.out.println("Total a pagar "+ ValorTotal);
             System.out.println(" O seu pedido foi efectuado");
             System.out.println("-------------------------------------------");
         System.out.println("Deseja fazer um novo pedido? ");
             System.out.println(" Sim [s] / Não [n]");
-           
-
-                resp = input.next().charAt(0);
+           resp = input.next().charAt(0);
+        
         } while( resp == 's' );
-        
-       
-         String nomeDoArquivo = "SnackBar1.txt";
-        String folder = "C:\\Users\\Pedro Malaquias\\Documents\\Programação";
-        String path = folder + "/" + nomeDoArquivo;
-         gerarFactura(nomeDoArquivo, path, dados);  
-      
-        
-    
+
+             gerarFactura(nome,email,contacto,endereco,list,ValorTotal);
     }
     
-    private static void gerarFactura(String nomeDoArquivo, String path, List<String> dados) {
+    private static void gerarFactura(String nome,String email, String contacto, 
+            String endereco,List<Prato> list,double ValorTotal) {
 
-        FileWriter stream;
-        PrintWriter print;
+         String path = "C:\\Users\\Pedro Malaquias\\Documents\\Programação\\SnackBar1.txt";
 
-        try {
-            //stream é uma conexao de escrita para o arquivo
-            stream = new FileWriter(path);
-            //class PrintWriter vai escrever no arquivo
-            print = new PrintWriter(stream);
+			try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
+				bw.write("FACTURA/RECIBO:\n");
+				bw.newLine();
+				bw.write(" Nome do cliente:"+ nome );
+				bw.newLine();
+				bw.write("E-mail:"+ email);
+				bw.newLine();
+				bw.write("Contacto: "+contacto);
+                                bw.newLine();
+                                bw.write("Endereco:"+ endereco);
+				bw.newLine();
+                                for (Prato prato: list) {
+                                bw.write("Prato:" + prato.toString());
+				bw.newLine();
+                            }
+                                bw.write("Valor Total:" + ValorTotal);
 
-            for (String linha : dados) {
-                print.println(linha);
-            }
-            //fechar o arquivo
-            stream.close();
-            print.close();
-
-            System.out.println("O arquivo " + nomeDoArquivo + " foi guardado na pasta " + path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+			} catch (IOException e) {
+				System.out.println("Error" + e.getMessage());
+			}
 
     }
       
 } 
+
